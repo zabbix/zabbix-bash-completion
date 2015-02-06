@@ -17,6 +17,15 @@ _zabbix_get()
 	nonunique_opts="-s|-p|-I|-k|--host|--port|--source-address|--key"
 	unique_opts_space=${unique_opts//|/ }
 	nonunique_opts_space=${nonunique_opts//|/ }
+	keys="agent.hostname agent.ping agent.version kernel.maxfiles kernel.maxproc log[ logrt[ net.dns[ net.dns.record[ \
+		net.if.collisions[ net.if.discovery net.if.in[ net.if.out[ net.if.total[ net.tcp.listen[ net.tcp.port[ net.tcp.service[ \
+		net.tcp.service.perf[ net.udp.listen[ proc.mem[ proc.num[ sensor[ system.boottime system.cpu.discovery system.cpu.intr \
+		system.cpu.load[ system.cpu.num[ system.cpu.switches system.cpu.util[ system.hostname[ system.hw.chassis[ system.hw.cpu[ \
+		system.hw.devices[ system.hw.macaddr[ system.localtime[ system.run[ system.stat[ system.sw.arch system.sw.os[ \
+		system.sw.packages[ system.swap.in[ system.swap.out[ system.swap.size[ system.uname system.uptime system.users.num \
+		vfs.dev.read[ vfs.dev.write[ vfs.file.cksum[ vfs.file.contents[ vfs.file.exists[ vfs.file.md5sum[ vfs.file.regexp[ \
+		vfs.file.regmatch[ vfs.file.size[ vfs.file.time[ vfs.fs.discovery vfs.fs.inode[ vfs.fs.size[ vm.memory.size[ \
+		web.page.get[ web.page.perf[ web.page.regexp[ eventlog[ net.if.list perf_counter[ proc_info[ service_state[ services[ wmi.get["    
 
 	opts=" $unique_opts_space $nonunique_opts_space "
 	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
@@ -57,7 +66,11 @@ _zabbix_get()
 			COMPREPLY=( $(compgen -W "$(ip -o addr show | awk '{sub(/\/.*/,"",$4); print $4}')" -- ${cur}) )
 			return 0
 			;;
-		-@(p|-port|k|-key))
+		-@(k|-key))
+			COMPREPLY=($(compgen -W "${keys}" -- ${cur}))
+			return 0
+			;;
+		-@(p|-port))
 			return 1
 			;;
 		*)
