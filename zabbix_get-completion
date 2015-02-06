@@ -49,19 +49,19 @@ _zabbix_get()
 		esac
 	done
 	case "${prev}" in
-	-@(s|-host))
-		COMPREPLY=( $(compgen -A hostname ${cur}) )
-		return 0
-		;;
-	-@(I|-source-address))
-		COMPREPLY=( $(compgen -W "$(ip -o addr show | awk '{sub(/\/.*/,"",$4); print $4}')" -- ${cur}) )
-		return 0
-		;;
-	-@(p|-port|k|-key))
-		return 1
-		;;
-	*)
-		;;
+		-@(s|-host))
+			COMPREPLY=( $(compgen -A hostname ${cur}) )
+			return 0
+			;;
+		-@(I|-source-address))
+			COMPREPLY=( $(compgen -W "$(ip -o addr show | awk '{sub(/\/.*/,"",$4); print $4}')" -- ${cur}) )
+			return 0
+			;;
+		-@(p|-port|k|-key))
+			return 1
+			;;
+		*)
+			;;
 	esac
 
 	COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
