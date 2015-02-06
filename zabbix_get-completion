@@ -57,7 +57,7 @@ _zabbix_get()
 		COMPREPLY=( $(compgen -W "$(ip -o addr show | awk '{sub(/\/.*/,"",$4); print $4}')" -- ${cur}) )
 		return 0
 		;;
-	-@(p|-port))
+	-@(p|-port|k|-key))
 		return 1
 		;;
 	*)
