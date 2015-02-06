@@ -1,0 +1,103 @@
+#
+#  Bash completion for zabbix_sender
+#
+
+# syntax like --param=value or -pvalue is not supported at this time
+# relies on 'ip' and 'awk'
+
+shopt -s extglob
+
+_zabbix_sender()
+{
+	local cur prev opts unique_opts nonunique_opts unique_opts_space nonunique_opts_space opt option
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	unique_opts="-h|--help|-V|--version"
+	nonunique_opts="-c|-k|-i|-I|-o|-p|-r|-s|-T|-v|-z|--host|--key|--input-file|--port|--real-time|--source-address|--with-timestamps|--value|--verbose|--zabbix-server|--config"
+	unique_opts_space=${unique_opts//|/ }
+	nonunique_opts_space=${nonunique_opts//|/ }
+
+	opts=" $unique_opts_space $nonunique_opts_space "
+	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
+		opt=${COMP_WORDS[$i]}
+
+		[[ $opt =~ --*[cspiorTzIkhVvw].* ]] && {
+			option=$opt
+		} || {
+			continue
+		}
+		# if a unique option has been supplied, do not offer any other options
+		[[ $option == @($unique_opts) ]] && {
+			opts=""
+			return 1
+		}
+		# if a non-unique option has been supplied, remove all unique options and already used options
+		[[ $option == @($nonunique_opts) ]] && opts="${opts/$unique_opts_space/}"
+		opts=${opts/ $option / }
+
+		# remove alternatives and exclusives
+		case "${option}" in
+			-s)                opts="${opts/ --host/}" ;;
+			--host)            opts="${opts/ -s/}" ;;
+			-I)                opts="${opts/ --source-address/}" ;;
+			--source-address)  opts="${opts/ -I/}" ;;
+			-p)                opts="${opts/ --port/}" ;;
+			--port)            opts="${opts/ -p/}" ;;
+			-k)                opts="${opts/ --key/}" ;;
+			--key)             opts="${opts/ -k/}" ;;
+			-c)                opts="${opts/ --config/}" ;;
+			--config)          opts="${opts/ -c/}" ;;
+			-z)                opts="${opts/ --zabbix-server/}" ;;
+			--zabbix-server)   opts="${opts/ -z/}" ;;
+			-o)                opts="${opts/ --value/}" ;;
+			--value)           opts="${opts/ -o/}" ;;
+			-i)                opts="${opts/ --input-file/}" ;;
+			--input-file)      opts="${opts/ -i/}" ;;
+			-T)                opts="${opts/ --with-timestamps/}" ;;
+			--with-timestamps) opts="${opts/ -T/}" ;;
+			-r)                opts="${opts/ --real-time/}" ;;
+			--real-time)       opts="${opts/ -r/}" ;;
+			-v)                opts="${opts/ --verbose/}" ;;
+			--verbose)         opts="${opts/ -v/}" ;;
+		esac
+		# these are exclusive
+		case "${option}" in
+			-@(o|-value))
+				opts="${opts/ -i/}"
+				opts="${opts/ --input-file/}"
+				opts="${opts/ --with-timestamps/}"
+				opts="${opts/ -T/}"
+				opts="${opts/ --real-time/}"
+				opts="${opts/ -r/}"
+				;;
+			-@(i|-input-file|T|-with-timestamps|r|-real-time))
+				opts="${opts/ -o/}"
+				opts="${opts/ --value/}"
+				;;
+		esac
+	done
+	case "${prev}" in
+
+		-@(c|i|-config|-input-file))
+			COMPREPLY=( $(compgen -f ${cur}) )
+			return 0
+			;;
+		-@(s|z|-host|-zabbix-server))
+			COMPREPLY=( $(compgen -A hostname ${cur}) )
+			return 0
+			;;
+		-@(I|-source-address))
+			COMPREPLY=( $(compgen -W "$(ip -o addr show | awk '{sub(/\/.*/,"",$4); print $4}')" -- ${cur}) )
+			return 0
+			;;
+		-@(p|-port|o|-value|k|-key))
+			return 1
+			;;
+		*)
+			;;
+	esac
+
+	COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+}
+complete -F _zabbix_sender zabbix_sender
