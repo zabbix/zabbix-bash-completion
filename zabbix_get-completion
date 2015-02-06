@@ -5,6 +5,8 @@
 # syntax like --param=value or -pvalue is not supported at this time
 # relies on 'ip' and 'awk'
 
+shopt -s extglob
+
 _zabbix_get()
 {
 	local cur prev opts unique_opts nonunique_opts unique_opts_space nonunique_opts_space opt option
