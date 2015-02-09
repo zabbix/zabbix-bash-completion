@@ -1,0 +1,68 @@
+#
+#  Bash completion for zabbix_proxy
+#
+
+# syntax like --param=value or -pvalue is not supported at this time
+# relies on 'ip' and 'awk'
+
+shopt -s extglob
+
+_zabbix_proxy()
+{
+	local cur prev opts unique_opts nonunique_opts unique_opts_space nonunique_opts_space opt option
+	local runtime_options
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	unique_opts="-h|--help|-V|--version"
+	nonunique_opts="-c|-R|--config|--runtime-control"
+	unique_opts_space=${unique_opts//|/ }
+	nonunique_opts_space=${nonunique_opts//|/ }
+	runtime_simple_options="config_cache_reload housekeeper_execute"
+	# it would be great to optionally continue loglevel options with '=',
+	#  process numbers, process types... how to do it?
+	runtime_loglevel_options="log_level_increase log_level_decrease"
+	runtime_options="$runtime_simple_options $runtime_loglevel_options"
+
+	opts=" $unique_opts_space $nonunique_opts_space "
+	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
+		opt=${COMP_WORDS[$i]}
+
+		[[ $opt =~ --*[hvVcRr].* ]] && {
+			option=$opt
+		} || {
+			continue
+		}
+		# if a unique option has been supplied, do not offer any other options
+		[[ $option == @($unique_opts) ]] && {
+			return 1
+		}
+		# if a non-unique option has been supplied, remove all unique options and already used options
+		[[ $option == @($nonunique_opts) ]] && opts="${opts/$unique_opts_space/}"
+		opts=${opts/ $option / }
+
+		# remove alternatives
+		case $option in
+			-R)                opts="${opts/ --runtime-control/}" ;;
+			--runtime-control) opts="${opts/ -R/}" ;;
+			-c)                opts="${opts/ --config/}" ;;
+			--config)          opts="${opts/ -c/}" ;;
+		esac
+	done
+	case "${prev}" in
+		-@(c|-config))
+			compopt -o default
+			COMPREPLY=()
+			return 0
+			;;
+		-@(R|-runtime-control))
+			COMPREPLY=( $(compgen -W "${runtime_options}" -- ${cur}) )
+			return 0
+			;;
+	*)
+		;;
+	esac
+
+	COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+}
+complete -F _zabbix_proxy zabbix_proxy
