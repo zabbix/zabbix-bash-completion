@@ -80,7 +80,9 @@ _zabbix_agentd()
 		;;
 		-@(R|-runtime-control))
 			COMPREPLY=( $(compgen -W "${runtime_options}" -- ${cur}) )
-			compopt -o nospace
+			if [[ $runtime_loglevel_options =~ ${COMPREPLY[@]} ]]; then
+				compopt -o nospace
+			fi
 			return 0
 			;;
 		-@(t|-test))
@@ -89,7 +91,7 @@ _zabbix_agentd()
 			return 0
 			;;
 		*)
-		;;
+			;;
 	esac
 
 	COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )

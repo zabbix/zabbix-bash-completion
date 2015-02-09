@@ -57,10 +57,13 @@ _zabbix_proxy()
 			;;
 		-@(R|-runtime-control))
 			COMPREPLY=( $(compgen -W "${runtime_options}" -- ${cur}) )
+			if [[ $runtime_loglevel_options =~ ${COMPREPLY[@]} ]]; then
+				compopt -o nospace
+			fi
 			return 0
 			;;
-	*)
-		;;
+		*)
+			;;
 	esac
 
 	COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
