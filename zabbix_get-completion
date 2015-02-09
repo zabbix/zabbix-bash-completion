@@ -68,7 +68,7 @@ _zabbix_get()
 			;;
 		-@(k|-key))
 			COMPREPLY=( $(compgen -W "${keys}" -- ${cur}) )
-			if [[ $COMPREPLY =~ "[" ]] ; then
+			if [[ $COMPREPLY =~ "[" ]]; then
 				compopt -o nospace
 			fi
 			return 0
