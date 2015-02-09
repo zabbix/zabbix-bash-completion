@@ -17,8 +17,8 @@ _zabbix_sender()
 	nonunique_opts="-c|-k|-i|-I|-o|-p|-r|-s|-T|-v|-z|--host|--key|--input-file|--port|--real-time|--source-address|--with-timestamps|--value|--verbose|--zabbix-server|--config"
 	unique_opts_space=${unique_opts//|/ }
 	nonunique_opts_space=${nonunique_opts//|/ }
-
 	opts=" $unique_opts_space $nonunique_opts_space "
+
 	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
 		opt=${COMP_WORDS[$i]}
 
@@ -29,7 +29,6 @@ _zabbix_sender()
 		}
 		# if a unique option has been supplied, do not offer any other options
 		[[ $option == @($unique_opts) ]] && {
-			opts=""
 			return 1
 		}
 		# if a non-unique option has been supplied, remove all unique options and already used options
@@ -78,9 +77,9 @@ _zabbix_sender()
 		esac
 	done
 	case "${prev}" in
-
 		-@(c|i|-config|-input-file))
-			COMPREPLY=( $(compgen -f ${cur}) )
+			compopt -o default
+			COMPREPLY=()
 			return 0
 			;;
 		-@(s|z|-host|-zabbix-server))

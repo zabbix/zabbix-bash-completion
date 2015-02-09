@@ -38,7 +38,6 @@ _zabbix_get()
 		}
 		# if a unique option has been supplied, do not offer any other options
 		[[ $option == @($unique_opts) ]] && {
-			opts=""
 			return 1
 		}
 		# if a non-unique option has been supplied, remove all unique options and already used options
