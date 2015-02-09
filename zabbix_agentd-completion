@@ -1,0 +1,96 @@
+#
+#  Bash completion for zabbix_agentd
+#
+
+# syntax like --param=value or -pvalue is not supported at this time
+# relies on 'ip' and 'awk'
+
+shopt -s extglob
+
+_zabbix_agentd()
+{
+	local cur prev opts unique_opts nonunique_opts unique_opts_space nonunique_opts_space opt option
+	local runtime_options
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	unique_opts="-h|--help|-V|--version"
+	nonunique_opts="-c|-p|-R|-t|--config|--print|--runtime-control|--test"
+	unique_opts_space=${unique_opts//|/ }
+	nonunique_opts_space=${nonunique_opts//|/ }
+	# it would be great to optionally continue loglevel options with '=', 
+	#  process numbers, process types... how to do it?
+	runtime_options="log_level_increase log_level_decrease"
+
+	opts=" $unique_opts_space $nonunique_opts_space "
+	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
+		opt=${COMP_WORDS[$i]}
+
+		[[ $opt =~ --*[pthvVcRr].* ]] && {
+			option=$opt
+		} || {
+			continue
+		}
+		# if a unique option has been supplied, do not offer any other options
+		[[ $option == @($unique_opts) ]] && {
+			return 1
+		}
+		# if a non-unique option has been supplied, remove all unique options and already used options
+		[[ $option == @($nonunique_opts) ]] && opts="${opts/$unique_opts_space/}"
+		opts=${opts/ $option / }
+
+		# remove alternatives
+		case $option in
+			-R)                opts="${opts/ --runtime-control/}" ;;
+			--runtime-control) opts="${opts/ -R/}" ;;
+			-c)                opts="${opts/ --config/}" ;;
+			--config)          opts="${opts/ -c/}" ;;
+			-p)                opts="${opts/ --print/}" ;;
+			--print)           opts="${opts/ -o/}" ;;
+			-t)                opts="${opts/ --test/}" ;;
+			--test)            opts="${opts/ -t/}" ;;
+		esac
+		# these are exclusive
+		case "${option}" in
+			-@(p|-print))
+				opts="${opts/ -t/}"
+				opts="${opts/ --test/}"
+				opts="${opts/ -R/}"
+				opts="${opts/ --runtime-control/}"
+				;;
+			-@(t|-test))
+				opts="${opts/ -p/}"
+				opts="${opts/ --print/}"
+				opts="${opts/ -R/}"
+				opts="${opts/ --runtime-control/}"
+				;;
+			-@(R|-runtime-control))
+				opts="${opts/ -t/}"
+				opts="${opts/ --test/}"
+				opts="${opts/ -p/}"
+				opts="${opts/ --print/}"
+				;;
+		esac
+	done
+	case "${prev}" in
+		-@(c|i|-config|-input-file))
+			COMPREPLY=( $(compgen -f ${cur}) )
+			return 0
+		;;
+		-@(R|-runtime-control))
+			COMPREPLY=( $(compgen -W "${runtime_options}" -- ${cur}) )
+			compopt -o nospace
+			return 0
+			;;
+		-@(t|-test))
+			# get the available item keys (without parameters) from the currently used binary
+			COMPREPLY=( $(compgen -W "$($1 -p | awk '/\[/ {sub(/\[.*/,"",$1);print $1}')" -- ${cur}) )
+			return 0
+			;;
+		*)
+		;;
+	esac
+
+	COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+}
+complete -F _zabbix_agentd zabbix_agentd
