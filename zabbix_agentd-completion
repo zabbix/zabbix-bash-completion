@@ -74,7 +74,8 @@ _zabbix_agentd()
 	done
 	case "${prev}" in
 		-@(c|i|-config|-input-file))
-			COMPREPLY=( $(compgen -f ${cur}) )
+			compopt -o default
+			COMPREPLY=()
 			return 0
 		;;
 		-@(R|-runtime-control))

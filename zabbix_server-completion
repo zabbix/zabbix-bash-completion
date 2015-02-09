@@ -50,8 +50,9 @@ _zabbix_server()
 		esac
 	done
 	case "${prev}" in
-		-@(c|i|-config|-input-file))
-			COMPREPLY=( $(compgen -f ${cur}) )
+		-@(c|-config))
+			compopt -o default
+			COMPREPLY=()
 			return 0
 			;;
 		-@(R|-runtime-control))
