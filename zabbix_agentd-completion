@@ -73,7 +73,7 @@ _zabbix_agentd()
 		esac
 	done
 	case "${prev}" in
-		-@(c|i|-config|-input-file))
+		-@(c|-config))
 			compopt -o default
 			COMPREPLY=()
 			return 0
