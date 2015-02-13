@@ -12,8 +12,8 @@ _zabbix_server()
 	local cur prev opts unique_opts nonunique_opts unique_opts_space nonunique_opts_space opt option
 	local runtime_options
 	COMPREPLY=()
-	cur="${COMP_WORDS[COMP_CWORD]}"
-	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	_get_comp_words_by_ref -n = cur prev
+
 	unique_opts="-h|--help|-V|--version"
 	nonunique_opts="-c|-R|--config|--runtime-control"
 	unique_opts_space=${unique_opts//|/ }
@@ -27,7 +27,6 @@ _zabbix_server()
 	opts=" $unique_opts_space $nonunique_opts_space "
 	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
 		opt=${COMP_WORDS[$i]}
-
 		[[ $opt =~ --*[hvVcRr].* ]] && {
 			option=$opt
 		} || {
@@ -56,6 +55,13 @@ _zabbix_server()
 			return 0
 			;;
 		-@(R|-runtime-control))
+			if [[ ${cur} =~ "=" ]]; then
+				# if -c is passed, we should only grab the child pids for the pid from the pidfile
+				# if -c is not yet passed, we should find out the default config file path for the used binary, but that is not possible yet
+				pids=$(ps -C $1 -o pid=)
+				COMPREPLY=( $(compgen -W "${pids}" -- ${cur#*=}) )
+				return 0
+			fi
 			COMPREPLY=( $(compgen -W "${runtime_options}" -- ${cur}) )
 			if [[ $runtime_loglevel_options =~ ${COMPREPLY[@]} ]]; then
 				compopt -o nospace
