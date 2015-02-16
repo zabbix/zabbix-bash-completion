@@ -7,20 +7,20 @@
 
 shopt -s extglob
 
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. $DIR/zabbix-daemons-completion
+
 _zabbix_proxy()
 {
 	local cur prev opts unique_opts nonunique_opts unique_opts_space nonunique_opts_space opt option
 	local runtime_options
 	COMPREPLY=()
-	cur="${COMP_WORDS[COMP_CWORD]}"
-	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	_get_comp_words_by_ref -n = cur prev
 	unique_opts="-h|--help|-V|--version"
 	nonunique_opts="-c|-R|--config|--runtime-control"
 	unique_opts_space=${unique_opts//|/ }
 	nonunique_opts_space=${nonunique_opts//|/ }
 	runtime_simple_options="config_cache_reload housekeeper_execute"
-	# it would be great to optionally continue loglevel options with '=',
-	#  process numbers, process types... how to do it?
 	runtime_loglevel_options="log_level_increase log_level_decrease"
 	runtime_options="$runtime_simple_options $runtime_loglevel_options"
 
@@ -56,15 +56,7 @@ _zabbix_proxy()
 			return 0
 			;;
 		-@(R|-runtime-control))
-			COMPREPLY=( $(compgen -W "${runtime_options}" -- ${cur}) )
-			if [[ $runtime_loglevel_options =~ ${COMPREPLY[@]} ]]; then
-				compopt -o nospace
-				if [[ ${#COMPREPLY[@]} = 1 ]]; then
-					# only one of increase/decrease left in the return array
-					# quite hackish
-					COMPREPLY=( ${COMPREPLY[0]} ${COMPREPLY[0]}= )
-				fi
-			fi
+			_zabbix-daemons-runtime "$cur" proxy $1
 			return 0
 			;;
 		*)

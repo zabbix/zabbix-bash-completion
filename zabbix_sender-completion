@@ -11,8 +11,7 @@ _zabbix_sender()
 {
 	local cur prev opts unique_opts nonunique_opts unique_opts_space nonunique_opts_space opt option
 	COMPREPLY=()
-	cur="${COMP_WORDS[COMP_CWORD]}"
-	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	_get_comp_words_by_ref -n = cur prev
 	unique_opts="-h|--help|-V|--version"
 	nonunique_opts="-c|-k|-i|-I|-o|-p|-r|-s|-T|-v|-z|--host|--key|--input-file|--port|--real-time|--source-address|--with-timestamps|--value|--verbose|--zabbix-server|--config"
 	unique_opts_space=${unique_opts//|/ }
