@@ -28,6 +28,7 @@ For all daemons, runtime options are completed. For log level changing:
  space is support. Doublequoting the parameters is not supported. For processes where more than one process is possible,
  trailing space is not added to allow specifying process number (not completed yet). For example:
 
+
     $ zabbix_agentd -R log_level_increase=
     active\ checks  collector       listener
 
@@ -37,9 +38,11 @@ For all completions, parameters are supported via space. Specifying them right a
 # Requirements
 
 * awk
+* ip
 * bash-completion
 
 # Troubleshooting
 
 * _get_comp_words_by_ref: command not found
+
   Package bash-completion must be installed
