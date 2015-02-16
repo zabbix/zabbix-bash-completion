@@ -2,9 +2,6 @@
 #  Bash completion for zabbix_server
 #
 
-# syntax like --param=value or -pvalue is not supported at this time
-# relies on 'ip' and 'awk'
-
 shopt -s extglob
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )

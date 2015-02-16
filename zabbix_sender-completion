@@ -2,9 +2,6 @@
 #  Bash completion for zabbix_sender
 #
 
-# syntax like --param=value or -pvalue is not supported at this time
-# relies on 'ip' and 'awk'
-
 shopt -s extglob
 
 _zabbix_sender()
