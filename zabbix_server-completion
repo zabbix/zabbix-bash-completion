@@ -10,7 +10,7 @@ shopt -s extglob
 _zabbix_server()
 {
 	local cur prev opts unique_opts nonunique_opts unique_opts_space nonunique_opts_space opt option
-	local runtime_options
+	local runtime_options config_supplied config_path pid_file parent_pid
 	COMPREPLY=()
 	_get_comp_words_by_ref -n = cur prev
 
@@ -19,14 +19,18 @@ _zabbix_server()
 	unique_opts_space=${unique_opts//|/ }
 	nonunique_opts_space=${nonunique_opts//|/ }
 	runtime_simple_options="config_cache_reload housekeeper_execute"
-	# it would be great to optionally continue loglevel options with '=',
-	#  process numbers, process types... how to do it?
 	runtime_loglevel_options="log_level_increase log_level_decrease"
 	runtime_options="$runtime_simple_options $runtime_loglevel_options"
+	runtime_processes=( alerter "configuration\ syncer" "db\ watchdog" discoverer escalator "history\ syncer" housekeeper "http\ poller" "icmp\ pinger" "ipmi\ poller" "java\ poller" poller "proxy\ poller" self-monitoring timer trapper "unreachable\ poller" "vmware\ collector" )
 
 	opts=" $unique_opts_space $nonunique_opts_space "
 	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
 		opt=${COMP_WORDS[$i]}
+		[[ $config_supplied ]] && {
+			config_path=$opt
+			unset config_supplied
+			continue
+		}
 		[[ $opt =~ --*[hvVcRr].* ]] && {
 			option=$opt
 		} || {
@@ -39,6 +43,10 @@ _zabbix_server()
 		# if a non-unique option has been supplied, remove all unique options and already used options
 		[[ $option == @($nonunique_opts) ]] && opts="${opts/$unique_opts_space/}"
 		opts=${opts/ $option / }
+
+		[[ $option == "-c" ]] && {
+			config_supplied=yes
+		}
 
 		# remove alternatives
 		case $option in
@@ -55,11 +63,47 @@ _zabbix_server()
 			return 0
 			;;
 		-@(R|-runtime-control))
-			if [[ ${cur} =~ "=" ]]; then
-				# if -c is passed, we should only grab the child pids for the pid from the pidfile
+			if [[ ${cur} =~ = ]]; then
+				if [[ ${cur} =~ [a-z]$ ]]; then
+					# no need to parse pids anymore, process name should be completed instead
+					# there does not seem to be a way to pass an array
+					#  (or any other way to pass parameters with spaces) to compgen
+					current_loglevel_option=${cur%=*}
+					runtime_proc_count=${#runtime_processes[@]}
+					for ((i=0; $i<=$runtime_proc_count; i++)); do
+						[[ ${runtime_processes[i]} = ${cur#$current_loglevel_option=}* ]] || {
+							unset runtime_processes[i]
+						}
+					done
+					# this could be continued by process number, so do not add space
+					# should be extended to offer actual process count numbers
+					compopt -o nospace
+					COMPREPLY=( "${runtime_processes[@]}" )
+					return 0
+				fi
+				# if -c is passed, we grab the child pids for the pid from the pidfile. Include directive is not supported
 				# if -c is not yet passed, we should find out the default config file path for the used binary, but that is not possible yet
-				pids=$(ps -C $1 -o pid=)
-				COMPREPLY=( $(compgen -W "${pids}" -- ${cur#*=}) )
+				[[ -f "$config_path" ]] && {
+					pid_file=$(awk -F= '/^ *PidFile/ {pidfile=$2} END{print pidfile}' "$config_path")
+					[[ -f $pid_file ]] && {
+						parent_pid=$(cat "$pid_file")
+					}
+				}
+
+				[[ $parent_pid ]] && {
+					# currently log level changing is not supported for the main process
+					# $pids should include $parent_pid once that is fixed
+					pids=$(ps --ppid $parent_pid -o pid=)
+				} || {
+					# if the parent pid was not found, fall back to all processes by name
+					# for example, config file might be unreadable for the current user when using sudo
+					pids=$(ps -C bash -o pid=)
+				}
+				[[ ${cur} =~ =$ ]] && {
+					COMPREPLY=( $(compgen -W "${pids}" -- ${cur#*=}) "${runtime_processes[@]}" )
+				} || {
+					COMPREPLY=( $(compgen -W "${pids}" -- ${cur#*=}) )
+				}
 				return 0
 			fi
 			COMPREPLY=( $(compgen -W "${runtime_options}" -- ${cur}) )
