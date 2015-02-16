@@ -7,6 +7,9 @@
 
 shopt -s extglob
 
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. $DIR/zabbix-daemons-completion
+
 _zabbix_server()
 {
 	local cur prev opts unique_opts nonunique_opts unique_opts_space nonunique_opts_space opt option
@@ -63,58 +66,7 @@ _zabbix_server()
 			return 0
 			;;
 		-@(R|-runtime-control))
-			if [[ ${cur} =~ = ]]; then
-				if [[ ${cur} =~ [a-z]$ ]]; then
-					# no need to parse pids anymore, process name should be completed instead
-					# there does not seem to be a way to pass an array
-					#  (or any other way to pass parameters with spaces) to compgen
-					current_loglevel_option=${cur%=*}
-					runtime_proc_count=${#runtime_processes[@]}
-					for ((i=0; $i<=$runtime_proc_count; i++)); do
-						[[ ${runtime_processes[i]} = ${cur#$current_loglevel_option=}* ]] || {
-							unset runtime_processes[i]
-						}
-					done
-					# this could be continued by process number, so do not add space
-					# should be extended to offer actual process count numbers
-					compopt -o nospace
-					COMPREPLY=( "${runtime_processes[@]}" )
-					return 0
-				fi
-				# if -c is passed, we grab the child pids for the pid from the pidfile. Include directive is not supported
-				# if -c is not yet passed, we should find out the default config file path for the used binary, but that is not possible yet
-				[[ -f "$config_path" ]] && {
-					pid_file=$(awk -F= '/^ *PidFile/ {pidfile=$2} END{print pidfile}' "$config_path")
-					[[ -f $pid_file ]] && {
-						parent_pid=$(cat "$pid_file")
-					}
-				}
-
-				[[ $parent_pid ]] && {
-					# currently log level changing is not supported for the main process
-					# $pids should include $parent_pid once that is fixed
-					pids=$(ps --ppid $parent_pid -o pid=)
-				} || {
-					# if the parent pid was not found, fall back to all processes by name
-					# for example, config file might be unreadable for the current user when using sudo
-					pids=$(ps -C bash -o pid=)
-				}
-				[[ ${cur} =~ =$ ]] && {
-					COMPREPLY=( $(compgen -W "${pids}" -- ${cur#*=}) "${runtime_processes[@]}" )
-				} || {
-					COMPREPLY=( $(compgen -W "${pids}" -- ${cur#*=}) )
-				}
-				return 0
-			fi
-			COMPREPLY=( $(compgen -W "${runtime_options}" -- ${cur}) )
-			if [[ $runtime_loglevel_options =~ ${COMPREPLY[@]} ]]; then
-				compopt -o nospace
-				if [[ ${#COMPREPLY[@]} = 1 ]]; then
-					# only one of increase/decrease left in the return array
-					# quite hackish
-					COMPREPLY=( ${COMPREPLY[0]} ${COMPREPLY[0]}= )
-				fi
-			fi
+			_zabbix-daemons-runtime "$cur" server
 			return 0
 			;;
 		*)
