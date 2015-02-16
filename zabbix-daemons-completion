@@ -12,6 +12,7 @@ runtime_processes_common=( alerter "configuration\ syncer" discoverer "history\ 
  "vmware\ collector" )
 runtime_processes_server=( "db\ watchdog" escalator "proxy\ poller" timer  )
 runtime_processes_proxy=( "data\ sender" "heartbeat\ sender" )
+runtime_processes_single="alerter|configuration\ syncer|housekeeper|self-monitoring|db\ watchdog|escalator|data\ sender|heartbeat\ sender|collector"
 
 case $2 in
 	server)
@@ -37,7 +38,9 @@ if [[ ${cur} =~ = ]]; then
 		done
 		# this could be continued by process number, so do not add space
 		# should be extended to offer actual process count numbers
-		compopt -o nospace
+		[[ ${cur#*=} =~ $runtime_processes_single ]] || {
+			compopt -o nospace
+		}
 		COMPREPLY=( "${runtime_processes[@]}" )
 		return 0
 	fi
