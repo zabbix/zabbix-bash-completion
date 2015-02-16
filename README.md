@@ -18,3 +18,13 @@ Available item keys are read from the agent binary that is specified. For exampl
 
     zabbix_agentd -t system.u<tab><tab>
     system.uname      system.uptime     system.users.num
+
+# Requirements
+
+* awk
+* bash-completion
+
+# Troubleshooting
+
+* _get_comp_words_by_ref: command not found
+  Package bash-completion must be installed
