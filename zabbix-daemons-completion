@@ -35,7 +35,7 @@ if [[ ${cur} =~ = ]]; then
 		runtime_proc_count=${#runtime_processes[@]}
 		current_process=${cur#*=}
 		for ((i=0; $i<=$runtime_proc_count; i++)); do
-			[[ ${runtime_processes[i]} = ${current_process}* ]] || {
+			[[ ${runtime_processes[i]} = "${current_process}"* ]] || {
 				unset runtime_processes[i]
 			}
 		done
