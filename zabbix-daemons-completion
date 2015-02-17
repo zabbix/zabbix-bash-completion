@@ -28,19 +28,21 @@ esac
 if [[ ${cur} =~ = ]]; then
 	if [[ ${cur} =~ [a-z]$ ]]; then
 		# no need to parse pids anymore, process name should be completed instead
+		# this could be continued by a process number, so do not add space
+		# should be extended to offer actual process count numbers
+		current_process=${cur#*=}
+		[[ ${current_process} =~ $runtime_processes_single ]] || {
+			# this will break if there's ever a process name that is a continuation of a "single" process
+			compopt -o nospace
+		}
 		# there does not seem to be a way to pass an array
 		#  (or any other way to pass parameters with spaces) to compgen
 		runtime_proc_count=${#runtime_processes[@]}
 		for ((i=0; $i<=$runtime_proc_count; i++)); do
-			[[ ${runtime_processes[i]} = ${cur#*=}* ]] || {
+			[[ ${runtime_processes[i]} = ${current_process}* ]] || {
 				unset runtime_processes[i]
 			}
 		done
-		# this could be continued by process number, so do not add space
-		# should be extended to offer actual process count numbers
-		[[ ${cur#*=} =~ $runtime_processes_single ]] || {
-			compopt -o nospace
-		}
 		COMPREPLY=( "${runtime_processes[@]}" )
 		return 0
 	fi
