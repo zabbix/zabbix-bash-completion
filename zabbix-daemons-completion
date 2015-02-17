@@ -77,7 +77,7 @@ if [[ $runtime_loglevel_options =~ ${COMPREPLY[@]} ]]; then
 	if [[ ${#COMPREPLY[@]} = 1 ]]; then
 		# only one of increase/decrease left in the return array
 		# quite hackish
-		COMPREPLY=( ${COMPREPLY[0]} ${COMPREPLY[0]}= )
+		COMPREPLY+=( ${COMPREPLY[0]}= )
 	fi
 fi
 }
