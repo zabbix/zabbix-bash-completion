@@ -26,11 +26,15 @@ For all daemons, runtime options are completed. For log level changing:
  the system that match the currently completed processes are listed
 * Process name completion uses a hardcoded process list. For processes that have a space in the name, backspace-escaped
  space is support. Doublequoting the parameters is not supported. For processes where more than one process is possible,
- trailing space is not added to allow specifying process number (not completed yet). For example:
+ trailing space is not added to allow specifying process number. Process number is completed from the output of 'ps'.
+ For example:
 
 ```
-    $ zabbix_agentd -R log_level_increase=
+    $ zabbix_agentd -R log_level_increase=<tab><tab>
     active\ checks  collector       listener
+
+    $ zabbix_server -R log_level_increase=poller,<tab><tab>
+    poller,1  poller,2  poller,3  poller,4  poller,5
 ```
 
 For all completions, parameters are supported via space. Specifying them right away or via an equal sign (like -pvalue
