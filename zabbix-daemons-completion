@@ -75,15 +75,14 @@ if [[ ${cur} =~ = ]]; then
 		store_IFS=$IFS
 		IFS=$'\n'
 		process_count=$(ps ${ps_args[@]} -o args= | awk -F"[:#[]" '{print $2}' | grep -c "^ $process_name_unescaped $")
-		IFS=$store_IFS
 		[[ $process_count -gt 0 ]] && {
 			# completion propoals will have process name prepended before the number. the only way around
 			#  this seems to be set COMP_WORDBREAKS globally, which is not a good idea (it would affect
 			#  other completions). setting COMP_WORDBREAKS at any level in a single completion does not seem
 			#  to work.
-			# does not work properly if process name contains space.
 			COMPREPLY=( $(compgen -P "${process_name}," -W "{1..$process_count}" -- ${cur#*,}) )
 		}
+		IFS=$store_IFS
 		return 0
 	fi
 	pids=$(ps ${ps_args[@]} -o pid=)
