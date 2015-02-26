@@ -22,7 +22,7 @@ _zabbix_get()
 		system.sw.packages[ system.swap.in[ system.swap.out[ system.swap.size[ system.uname system.uptime system.users.num \
 		vfs.dev.read[ vfs.dev.write[ vfs.file.cksum[ vfs.file.contents[ vfs.file.exists[ vfs.file.md5sum[ vfs.file.regexp[ \
 		vfs.file.regmatch[ vfs.file.size[ vfs.file.time[ vfs.fs.discovery vfs.fs.inode[ vfs.fs.size[ vm.memory.size[ \
-		web.page.get[ web.page.perf[ web.page.regexp[ eventlog[ net.if.list perf_counter[ proc_info[ service_state[ services[ wmi.get["    
+		web.page.get[ web.page.perf[ web.page.regexp[ eventlog[ net.if.list perf_counter[ proc_info[ service_state[ services[ wmi.get["
 
 	opts=" $unique_opts_space $nonunique_opts_space "
 	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
