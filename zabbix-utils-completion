@@ -1,0 +1,10 @@
+#
+#  Bash completion, common file for Zabbix utilities get and sender
+#
+
+_zabbix-utils-tls-connect()
+{
+cur=$1
+local tls_connect_options="unencrypted psk cert"
+COMPREPLY=( $(compgen -W "${tls_connect_options}" -- ${cur}) )
+}

@@ -10,7 +10,7 @@ _zabbix_sender()
 	COMPREPLY=()
 	_get_comp_words_by_ref -n = cur prev
 	unique_opts="-h|--help|-V|--version"
-	nonunique_opts="-c|-k|-i|-I|-o|-p|-r|-s|-T|-v|-z|--host|--key|--input-file|--port|--real-time|--source-address|--with-timestamps|--value|--verbose|--zabbix-server|--config"
+	nonunique_opts="-c|-k|-i|-I|-o|-p|-r|-s|-T|-v|-z|--host|--key|--input-file|--port|--real-time|--source-address|--with-timestamps|--value|--verbose|--zabbix-server|--config|--tls-connect|--tls-ca-file|--tls-crl-file|--tls-server-cert-issuer|--tls-server-cert-subject|--tls-cert-file|--tls-key-file|--tls-psk-identity|--tls-psk-file"
 	unique_opts_space=${unique_opts//|/ }
 	nonunique_opts_space=${nonunique_opts//|/ }
 	opts=" $unique_opts_space $nonunique_opts_space "
@@ -18,7 +18,7 @@ _zabbix_sender()
 	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
 		opt=${COMP_WORDS[$i]}
 
-		[[ $opt =~ --*[cspiorTzIkhVvw].* ]] && {
+		[[ $opt =~ --*[cspiorTtzIkhVvw].* ]] && {
 			option=$opt
 		} || {
 			continue
@@ -70,10 +70,46 @@ _zabbix_sender()
 				opts="${opts/ -o/}"
 				opts="${opts/ --value/}"
 				;;
+			-@(-tls-ca-file|-tls-crl-file|-tls-server-cert-issuer|-tls-server-cert-subject|-tls-cert-file|-tls-key-file))
+				opts="${opts/ --tls-psk-identity/}"
+				opts="${opts/ --tls-psk-file/}"
+				;;
+			-@(-tls-psk-identity|-tls-psk-file))
+				opts="${opts/ --tls-ca-file/}"
+				opts="${opts/ --tls-crl-file/}"
+				opts="${opts/ --tls-server-cert-issuer/}"
+				opts="${opts/ --tls-server-cert-subject/}"
+				opts="${opts/ --tls-cert-file/}"
+				opts="${opts/ --tls-key-file/}"
+				;;
+			--tls-connect)
+				[[ ${COMP_WORDS[$[$i+1]]} == unencrypted ]] && {
+					opts="${opts/ --tls-ca-file/}"
+					opts="${opts/ --tls-crl-file/}"
+					opts="${opts/ --tls-server-cert-issuer/}"
+					opts="${opts/ --tls-server-cert-subject/}"
+					opts="${opts/ --tls-cert-file/}"
+					opts="${opts/ --tls-key-file/}"
+					opts="${opts/ --tls-psk-identity/}"
+					opts="${opts/ --tls-psk-file/}"
+				}
+				[[ ${COMP_WORDS[$[$i+1]]} == psk ]] && {
+					opts="${opts/ --tls-ca-file/}"
+					opts="${opts/ --tls-crl-file/}"
+					opts="${opts/ --tls-server-cert-issuer/}"
+					opts="${opts/ --tls-server-cert-subject/}"
+					opts="${opts/ --tls-cert-file/}"
+					opts="${opts/ --tls-key-file/}"
+				}
+				[[ ${COMP_WORDS[$[$i+1]]} == cert ]] && {
+					opts="${opts/ --tls-psk-identity/}"
+					opts="${opts/ --tls-psk-file/}"
+				}
+				;;
 		esac
 	done
 	case "${prev}" in
-		-@(c|i|-config|-input-file))
+		-@(c|i|-config|-input-file|-tls-psk-file|-tls-ca-file|-tls-crl-file|-tls-cert-file|-tls-key-file))
 			compopt -o default
 			COMPREPLY=()
 			return 0
@@ -86,8 +122,12 @@ _zabbix_sender()
 			COMPREPLY=( $(compgen -W "$(ip -o addr show | awk '{sub(/\/.*/,"",$4); print $4}')" -- ${cur}) )
 			return 0
 			;;
-		-@(p|-port|o|-value|k|-key))
+		-@(p|-port|o|-value|k|-key|-tls-server-cert-issuer|-tls-server-cert-subject|-tls-psk-identity))
 			return 1
+			;;
+		--tls-connect)
+			_zabbix-utils-tls-connect "$cur"
+			return 0
 			;;
 		*)
 			;;

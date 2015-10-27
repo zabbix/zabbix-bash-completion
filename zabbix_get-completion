@@ -11,7 +11,7 @@ _zabbix_get()
 	COMPREPLY=()
 	_get_comp_words_by_ref -n = cur prev
 	unique_opts="-h|--help|-V|--version"
-	nonunique_opts="-s|-p|-I|-k|--host|--port|--source-address|--key"
+	nonunique_opts="-s|-p|-I|-k|--host|--port|--source-address|--key|--tls-connect|--tls-ca-file|--tls-crl-file|--tls-agent-cert-issuer|--tls-agent-cert-subject|--tls-cert-file|--tls-key-file|--tls-psk-identity|--tls-psk-file"
 	unique_opts_space=${unique_opts//|/ }
 	nonunique_opts_space=${nonunique_opts//|/ }
 	keys="agent.hostname agent.ping agent.version kernel.maxfiles kernel.maxproc net.dns[ net.dns.record[ \
@@ -29,7 +29,7 @@ _zabbix_get()
 	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
 		opt=${COMP_WORDS[$i]}
 
-		[[ $opt =~ --*[spIkhVv].* ]] && {
+		[[ $opt =~ --*[spIkhVvt].* ]] && {
 			option=$opt
 		} || {
 			continue
@@ -42,7 +42,7 @@ _zabbix_get()
 		[[ $option == @($nonunique_opts) ]] && opts="${opts/$unique_opts_space/}"
 		opts=${opts/ $option / }
 
-		# remove alternatives
+		# remove alternatives and exclusives
 		case $option in
 			-s)                opts="${opts/ --host/}" ;;
 			--host)            opts="${opts/ -s/}" ;;
@@ -53,8 +53,52 @@ _zabbix_get()
 			-k)                opts="${opts/ --key/}" ;;
 			--key)             opts="${opts/ -k/}" ;;
 		esac
+		# these are exclusive
+		case "${option}" in
+			-@(-tls-ca-file|-tls-crl-file|-tls-agent-cert-issuer|-tls-agent-cert-subject|-tls-cert-file|-tls-key-file))
+				opts="${opts/ --tls-psk-identity/}"
+				opts="${opts/ --tls-psk-file/}"
+				;;
+			-@(-tls-psk-identity|-tls-psk-file))
+				opts="${opts/ --tls-ca-file/}"
+				opts="${opts/ --tls-crl-file/}"
+				opts="${opts/ --tls-agent-cert-issuer/}"
+				opts="${opts/ --tls-agent-cert-subject/}"
+				opts="${opts/ --tls-cert-file/}"
+				opts="${opts/ --tls-key-file/}"
+				;;
+			--tls-connect)
+				[[ ${COMP_WORDS[$[$i+1]]} == unencrypted ]] && {
+					opts="${opts/ --tls-ca-file/}"
+					opts="${opts/ --tls-crl-file/}"
+					opts="${opts/ --tls-agent-cert-issuer/}"
+					opts="${opts/ --tls-agent-cert-subject/}"
+					opts="${opts/ --tls-cert-file/}"
+					opts="${opts/ --tls-key-file/}"
+					opts="${opts/ --tls-psk-identity/}"
+					opts="${opts/ --tls-psk-file/}"
+				}
+				[[ ${COMP_WORDS[$[$i+1]]} == psk ]] && {
+					opts="${opts/ --tls-ca-file/}"
+					opts="${opts/ --tls-crl-file/}"
+					opts="${opts/ --tls-agent-cert-issuer/}"
+					opts="${opts/ --tls-agent-cert-subject/}"
+					opts="${opts/ --tls-cert-file/}"
+					opts="${opts/ --tls-key-file/}"
+				}
+				[[ ${COMP_WORDS[$[$i+1]]} == cert ]] && {
+					opts="${opts/ --tls-psk-identity/}"
+					opts="${opts/ --tls-psk-file/}"
+				}
+				;;
+		esac
 	done
 	case "${prev}" in
+		-@(-tls-psk-file|-tls-ca-file|-tls-crl-file|-tls-cert-file|-tls-key-file))
+			compopt -o default
+			COMPREPLY=()
+			return 0
+			;;
 		-@(s|-host))
 			COMPREPLY=( $(compgen -A hostname ${cur}) )
 			return 0
@@ -70,8 +114,12 @@ _zabbix_get()
 			fi
 			return 0
 			;;
-		-@(p|-port))
+		-@(p|-port|-tls-agent-cert-issuer|-tls-agent-cert-subject|-tls-psk-identity))
 			return 1
+			;;
+		--tls-connect)
+			_zabbix-utils-tls-connect "$cur"
+			return 0
 			;;
 		*)
 			;;
