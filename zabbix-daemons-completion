@@ -76,7 +76,7 @@ if [[ ${cur} =~ = ]]; then
 		IFS=$'\n'
 		process_count=$(ps ${ps_args[@]} -o args= | awk -F"[:#[]" '{print $2}' | grep -c "^ $process_name_unescaped $")
 		[[ $process_count -gt 0 ]] && {
-			# completion propoals will have process name prepended before the number. the only way around
+			# completion proposals will have process name prepended before the number. the only way around
 			#  this seems to be set COMP_WORDBREAKS globally, which is not a good idea (it would affect
 			#  other completions). setting COMP_WORDBREAKS at any level in a single completion does not seem
 			#  to work.
