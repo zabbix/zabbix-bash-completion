@@ -63,7 +63,7 @@ _zabbix_server()
 			return 0
 			;;
 		-@(R|-runtime-control))
-			_zabbix-daemons-runtime "$cur" server $1
+			_zabbix-daemons-runtime "$cur" server
 			return 0
 			;;
 		*)

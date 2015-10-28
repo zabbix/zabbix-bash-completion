@@ -53,7 +53,7 @@ _zabbix_proxy()
 			return 0
 			;;
 		-@(R|-runtime-control))
-			_zabbix-daemons-runtime "$cur" proxy $1
+			_zabbix-daemons-runtime "$cur" proxy
 			return 0
 			;;
 		*)
