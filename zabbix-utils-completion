@@ -5,6 +5,25 @@
 _zabbix-utils-tls-connect()
 {
 cur=$1
+local util=$2
 local tls_connect_options="unencrypted psk cert"
+local cert_opts="--tls-ca-file|--tls-crl-file|--tls-cert-file|--tls-key-file"
+local psk_opts="--tls-psk-identity|--tls-psk-file"
+
+[[ $util = get ]] && cert_opts="$cert_opts|--tls-agent-cert-issuer|--tls-agent-cert-subject"
+[[ $util = sender ]] && cert_opts="$cert_opts|--tls-server-cert-issuer|--tls-server-cert-subject"
+
+# we skip the current parameter and the one before it, because it can not be any of the encruption parameters
+# at most it can be the value for an encryption parameter
+for (( i=1; i<=${#COMP_WORDS[@]-2}; ++i )) ; do
+	local option=${COMP_WORDS[$i]}
+	if [[ $option == @($psk_opts) ]]; then
+		COMPREPLY=( $(compgen -W "psk" -- ${cur}) )
+		return 0
+	elif [[ $option == @($cert_opts) ]]; then
+		COMPREPLY=( $(compgen -W "cert" -- ${cur}) )
+		return 0
+	fi
+done
 COMPREPLY=( $(compgen -W "${tls_connect_options}" -- ${cur}) )
 }

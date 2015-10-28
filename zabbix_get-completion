@@ -118,7 +118,7 @@ _zabbix_get()
 			return 1
 			;;
 		--tls-connect)
-			_zabbix-utils-tls-connect "$cur"
+			_zabbix-utils-tls-connect "$cur" get
 			return 0
 			;;
 		*)
