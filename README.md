@@ -3,9 +3,9 @@ Zabbix Bash Completion
 
 Bash completion for Zabbix commands
 
-To try this out, source the file. For example:
+To try this out, source the files. For example:
 
-    $ . zabbix_get-completion
+    $ . zabbix_get-completion; . zabbix-utils-completion
     $ zabbix_get -<tab><tab>
 
 For zabbix_get, item key completion is available. Available item keys are hardcoded. If the currently completed key ends
@@ -40,6 +40,14 @@ For all daemons, runtime options are completed. For log level changing:
 
 For all completions, parameters are supported via space. Specifying them right away or via an equal sign (like -pvalue
  or --param=value) is not supported.
+
+# Installing
+
+Simple testing can be done by sourcing the files. Completion for get and sender depends on zabbix-utils-completion.
+Completion for agentd, server and proxy depends on zabbix-daemons-completion.
+
+To make Zabbix command completion available permanently, place all the files in /etc/bash_completion.d/ and start a new
+ shell session.
 
 # Requirements
 
