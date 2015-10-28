@@ -13,7 +13,7 @@ local psk_opts="--tls-psk-identity|--tls-psk-file"
 [[ $util = get ]] && cert_opts="$cert_opts|--tls-agent-cert-issuer|--tls-agent-cert-subject"
 [[ $util = sender ]] && cert_opts="$cert_opts|--tls-server-cert-issuer|--tls-server-cert-subject"
 
-# we skip the current parameter and the one before it, because it can not be any of the encruption parameters
+# we skip the current parameter and the one before it, because it can not be any of the encryption parameters
 # at most it can be the value for an encryption parameter
 for (( i=1; i<=${#COMP_WORDS[@]-2}; ++i )) ; do
 	local option=${COMP_WORDS[$i]}
