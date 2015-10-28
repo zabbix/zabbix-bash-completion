@@ -25,8 +25,9 @@ For all daemons, runtime options are completed. For log level changing:
 * PID list is completed by the parent PID from the configuration file, if supplied. If not supplied, all processes on
  the system that match the currently completed processes are listed
 * Process name completion uses a hardcoded process list. For processes that have a space in the name, backspace-escaped
- space is support. Doublequoting the parameters is not supported. For processes where more than one process is possible,
- trailing space is not added to allow specifying process number. Process number is completed from the output of 'ps'.
+ space is supported. Doublequoting the parameters is not supported. For processes where more than one process is
+ possible, trailing space is not added to allow specifying process number. Process number is completed from the output
+ of 'ps'.
  For example:
 
 ```
