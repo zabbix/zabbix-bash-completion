@@ -78,7 +78,7 @@ _zabbix_agentd()
 			;;
 		-@(t|-test))
 			# get the available item keys (without parameters) from the currently used binary
-			COMPREPLY=( $(compgen -W "$($1 -p | awk '/\[/ {sub(/\[.*/,"[",$1);print $1}')" -- ${cur}) )
+			COMPREPLY=( $(compgen -W "$($1 -p | awk '/\[/{ sub(/\[.*/,"["); if ($1 ~ /^[[:alnum:]._-]+\[?$/) print $1}')" -- ${cur}) )
 			if [[ $COMPREPLY =~ "[" ]]; then
 				compopt -o nospace
 			fi
