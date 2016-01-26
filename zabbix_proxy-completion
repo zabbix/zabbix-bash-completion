@@ -11,7 +11,7 @@ _zabbix_proxy()
 	COMPREPLY=()
 	_get_comp_words_by_ref -n = cur prev
 	unique_opts="-h|--help|-V|--version"
-	nonunique_opts="-c|-R|--config|--runtime-control"
+	nonunique_opts="-c|-R|-f|--config|--runtime-control|--foreground"
 	unique_opts_space=${unique_opts//|/ }
 	nonunique_opts_space=${nonunique_opts//|/ }
 	runtime_simple_options="config_cache_reload housekeeper_execute"
@@ -22,7 +22,7 @@ _zabbix_proxy()
 	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
 		opt=${COMP_WORDS[$i]}
 
-		[[ $opt =~ --*[hvVcRr].* ]] && {
+		[[ $opt =~ --*[hvVcRrf].* ]] && {
 			option=$opt
 		} || {
 			continue
