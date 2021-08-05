@@ -26,7 +26,7 @@ _zabbix_get()
 		web.page.regexp[ eventlog[ net.if.list perf_counter[ proc_info[ service_state[ services[ wmi.get["
 
 	opts=" $unique_opts_space $nonunique_opts_space "
-	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
+	for (( i=1; i<=$[${#COMP_WORDS[@]}-1]; ++i )) ; do
 		opt=${COMP_WORDS[$i]}
 
 		[[ $opt =~ --*[spIkhVvt].* ]] && {

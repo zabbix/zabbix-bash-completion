@@ -19,7 +19,7 @@ _zabbix_proxy()
 	runtime_options="$runtime_simple_options $runtime_loglevel_options"
 
 	opts=" $unique_opts_space $nonunique_opts_space "
-	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
+	for (( i=1; i<=$[${#COMP_WORDS[@]}-1]; ++i )) ; do
 		opt=${COMP_WORDS[$i]}
 
 		[[ $opt =~ --*[hvVcRrf].* ]] && {

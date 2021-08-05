@@ -17,7 +17,7 @@ _zabbix_agentd()
 	runtime_options="log_level_increase log_level_decrease"
 
 	opts=" $unique_opts_space $nonunique_opts_space "
-	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
+	for (( i=1; i<=$[${#COMP_WORDS[@]}-1]; ++i )) ; do
 		opt=${COMP_WORDS[$i]}
 
 		[[ $opt =~ --*[pthvVcRrf].* ]] && {

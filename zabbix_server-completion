@@ -21,7 +21,7 @@ _zabbix_server()
 	runtime_processes=( alerter "configuration\ syncer" "db\ watchdog" discoverer escalator "history\ syncer" housekeeper "http\ poller" "icmp\ pinger" "ipmi\ poller" "java\ poller" poller "proxy\ poller" self-monitoring timer trapper "unreachable\ poller" "vmware\ collector" )
 
 	opts=" $unique_opts_space $nonunique_opts_space "
-	for (( i=1; i<=${#COMP_WORDS[@]-1}; ++i )) ; do
+	for (( i=1; i<=$[${#COMP_WORDS[@]}-1]; ++i )) ; do
 		opt=${COMP_WORDS[$i]}
 		[[ $config_supplied ]] && {
 			config_path=$opt
