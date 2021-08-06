@@ -11,6 +11,7 @@ process=$3
 local runtime_loglevel_options="log_level_increase log_level_decrease"
 local runtime_options="$runtime_simple_options $runtime_loglevel_options"
 
+if [[ $cur =~ (${runtime_loglevel_options// /|})= ]]; then
 # when main process starts supporting runtime loglevel changing, it should be added here, too
 runtime_processes_common=( "configuration\ syncer" discoverer "history\ syncer" housekeeper
  "http\ poller" "icmp\ pinger" "ipmi\ manager" "ipmi\ poller" "java\ poller" poller "preprocessing\ manager"
@@ -102,6 +103,7 @@ if [[ ${cur} =~ = ]]; then
 		COMPREPLY=( "${pidarray[@]}" )
 	}
 	return 0
+fi
 fi
 COMPREPLY=( $(compgen -W "${runtime_options}" -- ${cur}) )
 
