@@ -5,6 +5,8 @@
 _zabbix-daemons-runtime()
 {
 cur=$1
+type=$2
+process=$3
 
 # when main process starts supporting runtime loglevel changing, it should be added here, too
 runtime_processes_common=( "configuration\ syncer" discoverer "history\ syncer" housekeeper
@@ -20,7 +22,7 @@ runtime_simple_options="config_cache_reload housekeeper_execute snmp_cache_reloa
 runtime_loglevel_options="log_level_increase log_level_decrease"
 runtime_options="$runtime_simple_options $runtime_loglevel_options"
 
-case $2 in
+case "$type" in
 	server)
 		runtime_processes=( "${runtime_processes_server[@]}" "${runtime_processes_common[@]}" )
 		;;
@@ -30,6 +32,7 @@ case $2 in
 	agentd)
 		runtime_processes=( collector listener "active\ checks" )
 esac
+
 
 if [[ ${cur} =~ = ]]; then
 	if [[ ${cur} =~ [a-z]$ ]]; then
@@ -71,7 +74,7 @@ if [[ ${cur} =~ = ]]; then
 	} || {
 		# if the parent pid was not found, fall back to all processes by name
 		# for example, config file might be unreadable for the current user when using sudo
-		ps_args=( -C ${3##*/} )
+		ps_args=( -C ${process##*/} )
 	}
 
 	if [[ ${cur} =~ , ]]; then
@@ -102,6 +105,7 @@ if [[ ${cur} =~ = ]]; then
 	return 0
 fi
 COMPREPLY=( $(compgen -W "${runtime_options}" -- ${cur}) )
+
 if [[ $runtime_loglevel_options =~ ${COMPREPLY[@]} ]]; then
 	compopt -o nospace
 	if [[ ${#COMPREPLY[@]} = 1 ]]; then
