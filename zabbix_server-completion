@@ -7,7 +7,8 @@ shopt -s extglob
 _zabbix_server()
 {
 	local cur prev opts unique_opts nonunique_opts unique_opts_space nonunique_opts_space opt option
-	local runtime_options config_supplied config_path pid_file parent_pid
+	local config_supplied config_path pid_file parent_pid
+	local runtime_simple_options="config_cache_reload housekeeper_execute snmp_cache_reload"
 	COMPREPLY=()
 	_get_comp_words_by_ref -n = cur prev
 

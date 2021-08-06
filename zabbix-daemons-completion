@@ -8,6 +8,9 @@ cur=$1
 type=$2
 process=$3
 
+local runtime_loglevel_options="log_level_increase log_level_decrease"
+local runtime_options="$runtime_simple_options $runtime_loglevel_options"
+
 # when main process starts supporting runtime loglevel changing, it should be added here, too
 runtime_processes_common=( "configuration\ syncer" discoverer "history\ syncer" housekeeper
  "http\ poller" "icmp\ pinger" "ipmi\ manager" "ipmi\ poller" "java\ poller" poller "preprocessing\ manager"
@@ -17,10 +20,6 @@ runtime_processes_server=( "alert\ manager" "alert\ syncer" alerter "db\ watchdo
  "lld\ worker" "proxy\ poller" timer )
 runtime_processes_proxy=( "data\ sender" "heartbeat\ sender" )
 runtime_processes_single="alert\ manager|alert\ syncer|configuration\ syncer|housekeeper|ipmi\ manager|preprocessing\ manager|self-monitoring|snmp\ trapper|db\ watchdog|data\ sender|heartbeat\ sender|collector"
-
-runtime_simple_options="config_cache_reload housekeeper_execute snmp_cache_reload"
-runtime_loglevel_options="log_level_increase log_level_decrease"
-runtime_options="$runtime_simple_options $runtime_loglevel_options"
 
 case "$type" in
 	server)

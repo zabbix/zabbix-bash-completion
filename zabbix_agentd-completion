@@ -7,14 +7,12 @@ shopt -s extglob
 _zabbix_agentd()
 {
 	local cur prev opts unique_opts nonunique_opts unique_opts_space nonunique_opts_space opt option
-	local runtime_options
 	COMPREPLY=()
 	_get_comp_words_by_ref -n = cur prev
 	unique_opts="-h|--help|-V|--version"
 	nonunique_opts="-c|-p|-R|-t|-f|--config|--print|--runtime-control|--test|--foreground"
 	unique_opts_space=${unique_opts//|/ }
 	nonunique_opts_space=${nonunique_opts//|/ }
-	runtime_options="log_level_increase log_level_decrease"
 
 	opts=" $unique_opts_space $nonunique_opts_space "
 	for (( i=1; i<=$[${#COMP_WORDS[@]}-1]; ++i )) ; do
