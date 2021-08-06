@@ -16,6 +16,10 @@ runtime_processes_server=( "alert\ manager" "alert\ syncer" alerter "db\ watchdo
 runtime_processes_proxy=( "data\ sender" "heartbeat\ sender" )
 runtime_processes_single="alert\ manager|alert\ syncer|configuration\ syncer|housekeeper|ipmi\ manager|preprocessing\ manager|self-monitoring|snmp\ trapper|db\ watchdog|data\ sender|heartbeat\ sender|collector"
 
+runtime_simple_options="config_cache_reload housekeeper_execute snmp_cache_reload"
+runtime_loglevel_options="log_level_increase log_level_decrease"
+runtime_options="$runtime_simple_options $runtime_loglevel_options"
+
 case $2 in
 	server)
 		runtime_processes=( "${runtime_processes_server[@]}" "${runtime_processes_common[@]}" )
