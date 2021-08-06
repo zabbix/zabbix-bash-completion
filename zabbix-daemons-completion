@@ -7,10 +7,12 @@ _zabbix-daemons-runtime()
 cur=$1
 
 # when main process starts supporting runtime loglevel changing, it should be added here, too
-runtime_processes_common=( alerter "configuration\ syncer" discoverer "history\ syncer" housekeeper
- "http\ poller" "icmp\ pinger" "ipmi\ poller" "java\ poller" poller self-monitoring trapper "unreachable\ poller"
- "vmware\ collector" )
-runtime_processes_server=( "db\ watchdog" escalator "proxy\ poller" timer  )
+runtime_processes_common=( "configuration\ syncer" discoverer "history\ syncer" housekeeper
+ "http\ poller" "icmp\ pinger" "ipmi\ manager" "ipmi\ poller" "java\ poller" poller "preprocessing\ manager"
+ "preprocessing\ worker" self-monitoring "snmp\ trapper" "task\ manager" trapper "unreachable\ poller"
+  "vmware\ collector" )
+runtime_processes_server=( "alert\ manager" "alert\ syncer" alerter "db\ watchdog" escalator "lld\ manager"
+ "lld\ worker" "proxy\ poller" timer )
 runtime_processes_proxy=( "data\ sender" "heartbeat\ sender" )
 runtime_processes_single="alerter|configuration\ syncer|housekeeper|self-monitoring|db\ watchdog|escalator|data\ sender|heartbeat\ sender|collector"
 
