@@ -14,7 +14,7 @@ runtime_processes_common=( "configuration\ syncer" discoverer "history\ syncer" 
 runtime_processes_server=( "alert\ manager" "alert\ syncer" alerter "db\ watchdog" escalator "lld\ manager"
  "lld\ worker" "proxy\ poller" timer )
 runtime_processes_proxy=( "data\ sender" "heartbeat\ sender" )
-runtime_processes_single="alerter|configuration\ syncer|housekeeper|self-monitoring|db\ watchdog|escalator|data\ sender|heartbeat\ sender|collector"
+runtime_processes_single="alert\ manager|alert\ syncer|configuration\ syncer|housekeeper|ipmi\ manager|preprocessing\ manager|self-monitoring|snmp\ trapper|db\ watchdog|data\ sender|heartbeat\ sender|collector"
 
 case $2 in
 	server)
