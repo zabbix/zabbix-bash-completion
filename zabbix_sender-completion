@@ -10,7 +10,7 @@ _zabbix_sender()
 	COMPREPLY=()
 	_get_comp_words_by_ref -n = cur prev
 	unique_opts="-h|--help|-V|--version"
-	nonunique_opts="-c|-k|-i|-I|-o|-p|-r|-s|-T|-v|-z|--host|--key|--input-file|--port|--real-time|--source-address|--with-timestamps|--value|--verbose|--zabbix-server|--config|--tls-connect|--tls-ca-file|--tls-crl-file|--tls-server-cert-issuer|--tls-server-cert-subject|--tls-cert-file|--tls-key-file|--tls-psk-identity|--tls-psk-file"
+	nonunique_opts="-c|-k|-i|-I|-o|-p|-r|-s|-T|-v|-z|--host|--key|--input-file|--port|--real-time|--source-address|--with-timestamps|--value|--verbose|--zabbix-server|--config|--tls-connect|--tls-ca-file|--tls-crl-file|--tls-server-cert-issuer|--tls-server-cert-subject|--tls-cert-file|--tls-key-file|--tls-psk-identity|--tls-psk-file|--tls-cipher|--tls-cipher13"
 	unique_opts_space=${unique_opts//|/ }
 	nonunique_opts_space=${nonunique_opts//|/ }
 	opts=" $unique_opts_space $nonunique_opts_space "
