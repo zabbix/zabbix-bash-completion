@@ -105,6 +105,12 @@ if [[ ${cur} =~ = ]]; then
 	return 0
 fi
 fi
+
+if [[ $cur =~ "diaginfo=" ]]; then
+	COMPREPLY=( $(compgen -W "${diaginfo_params}" -- ${cur#*=}) )
+	return 0
+fi
+
 COMPREPLY=( $(compgen -W "${runtime_options}" -- ${cur}) )
 
 if [[ $runtime_loglevel_options =~ ${COMPREPLY[@]} ]]; then
@@ -115,4 +121,10 @@ if [[ $runtime_loglevel_options =~ ${COMPREPLY[@]} ]]; then
 		COMPREPLY+=( "${COMPREPLY[0]}"= )
 	fi
 fi
+
+if [[ "diaginfo" == ${COMPREPLY[0]} ]]; then
+	compopt -o nospace
+	COMPREPLY+=( "${COMPREPLY[0]}"= )
+fi
+
 }

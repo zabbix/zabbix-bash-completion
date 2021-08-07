@@ -7,7 +7,8 @@ shopt -s extglob
 _zabbix_proxy()
 {
 	local cur prev opts unique_opts nonunique_opts unique_opts_space nonunique_opts_space opt option
-	local runtime_simple_options="config_cache_reload housekeeper_execute snmp_cache_reload"
+	local runtime_simple_options="config_cache_reload housekeeper_execute snmp_cache_reload diaginfo"
+	local diaginfo_params="historycache locks preprocessing"
 	COMPREPLY=()
 	_get_comp_words_by_ref -n = cur prev
 	unique_opts="-h|--help|-V|--version"
